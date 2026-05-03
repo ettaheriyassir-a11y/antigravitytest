@@ -97,12 +97,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
         promptText += `### Additional Instructions\nProvide a comprehensive, highly accurate, and rigorous response. If you require further clarification to provide the best possible output, please state your questions before answering.`;
 
-        // Display the result
-        promptOutput.textContent = promptText;
+        // Display loading state
+        promptOutput.textContent = "Connecting to AI... Please wait...";
         resultSection.classList.remove('hidden');
-        
-        // Smooth scroll to result
         resultSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        
+        generateBtn.disabled = true;
+        generateBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Generating...';
+
+        // Call the backend API
+        fetch('/api/generate', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ prompt: promptText })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                promptOutput.textContent = "Error: " + data.error;
+            } else {
+                promptOutput.textContent = data.result;
+            }
+        })
+        .catch(err => {
+            promptOutput.textContent = "Error connecting to server. Is the backend running?";
+            console.error(err);
+        })
+        .finally(() => {
+            generateBtn.disabled = false;
+            generateBtn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> Generate Precision Prompt';
+        });
     });
 
     // Copy to Clipboard
