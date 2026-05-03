@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLM Prompt Builder</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Prompt <span class="highlight">Forge</span></h1>
+            <p>Craft precise instructions for Science, Math, Code & More.</p>
+        </header>
+
+        <main class="glass-panel">
+            <div class="row">
+                <div class="form-group half-width">
+                    <label for="domain">1. Domain / Field</label>
+                    <div class="select-wrapper">
+                        <select id="domain">
+                            <option value="General Expert">General Expert</option>
+                            <option value="Computer Science & Programming">Computer Science & Programming</option>
+                            <option value="Mathematics">Mathematics</option>
+                            <option value="Physics">Physics</option>
+                            <option value="Chemistry">Chemistry</option>
+                            <option value="Biology & Life Sciences">Biology & Life Sciences</option>
+                            <option value="Data Science & Statistics">Data Science & Statistics</option>
+                            <option value="Engineering">Engineering</option>
+                            <option value="Medicine & Healthcare">Medicine & Healthcare</option>
+                        </select>
+                        <i class="fa-solid fa-chevron-down select-icon"></i>
+                    </div>
+                </div>
+                
+                <div class="form-group half-width">
+                    <label for="audience">2. Target Audience / Tone</label>
+                    <div class="select-wrapper">
+                        <select id="audience">
+                            <option value="Expert / Professional">Expert / Professional</option>
+                            <option value="College / Academic">College / Academic</option>
+                            <option value="High School Student">High School Student</option>
+                            <option value="Layman / General Public">Layman / General Public</option>
+                        </select>
+                        <i class="fa-solid fa-chevron-down select-icon"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="idea">3. What's your core idea or context?</label>
+                <textarea id="idea" placeholder="E.g., I am exploring the implications of quantum entanglement on information theory..." rows="3"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>4. What specific tasks do you need it to do?</label>
+                <div id="tasks-container">
+                    <div class="task-input-wrapper">
+                        <input type="text" class="task-input" placeholder="E.g., Explain the concept of Bell's Theorem">
+                        <button class="icon-btn remove-task" aria-label="Remove task" disabled>
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                </div>
+                <button id="add-task-btn" class="secondary-btn">
+                    <i class="fa-solid fa-plus"></i> Add Another Task
+                </button>
+            </div>
+
+            <div class="form-group">
+                <label for="achievement">5. What is the ultimate goal or achievement?</label>
+                <textarea id="achievement" placeholder="E.g., I want to build a foundational understanding to write a research paper on quantum cryptography." rows="2"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="constraints">6. Specific Constraints & Formatting</label>
+                <textarea id="constraints" placeholder="E.g., Use LaTeX for all mathematical equations. Provide citations in APA format. Do not use analogies, stick to rigorous mathematical definitions." rows="2"></textarea>
+            </div>
+
+            <button id="generate-btn" class="primary-btn">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> Generate Precision Prompt
+            </button>
+        </main>
+
+        <section id="result-section" class="glass-panel hidden">
+            <div class="result-header">
+                <h2>Your Prompt</h2>
+                <button id="copy-btn" class="icon-btn tooltip" aria-label="Copy to clipboard">
+                    <i class="fa-regular fa-copy"></i>
+                    <span class="tooltip-text">Copy</span>
+                </button>
+            </div>
+            <div class="result-content">
+                <pre><code id="prompt-output"></code></pre>
+            </div>
+        </section>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
