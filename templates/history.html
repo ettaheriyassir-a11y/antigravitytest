@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My History - TrendForge AI</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .history-card {
+            background-color: var(--input-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 0.5rem;
+        }
+        .history-platform {
+            font-weight: 600;
+            color: var(--accent-color);
+        }
+        .history-date {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+        .history-content {
+            font-size: 0.95rem;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            max-height: 200px;
+            overflow-y: auto;
+            color: var(--text-primary);
+        }
+        /* Custom scrollbar for content */
+        .history-content::-webkit-scrollbar {
+            width: 6px;
+        }
+        .history-content::-webkit-scrollbar-thumb {
+            background-color: var(--glass-border);
+            border-radius: 3px;
+        }
+        .copy-history-btn {
+            position: absolute;
+            bottom: 1rem;
+            right: 1.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: var(--text-primary);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .copy-history-btn:hover {
+            background: var(--accent-color);
+        }
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--text-secondary);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+            <div>
+                <h1>Trend<span class="highlight">Forge</span></h1>
+                <p>Your Content Archive.</p>
+            </div>
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <a href="{{ url_for('home') }}" class="secondary-btn" style="text-decoration: none; padding: 0.5rem 1rem;">
+                    <i class="fa-solid fa-house"></i> Home
+                </a>
+                <span style="color: var(--text-secondary); font-size: 0.9rem;">
+                    <i class="fa-solid fa-user"></i> {{ user.email }}
+                </span>
+            </div>
+        </header>
+
+        <main class="glass-panel">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h2>My History</h2>
+                <span style="background: rgba(255,255,255,0.1); padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.85rem;">
+                    {{ history|length }} Saved Items
+                </span>
+            </div>
+
+            {% if history %}
+                {% for item in history %}
+                <div class="history-card">
+                    <div class="history-header">
+                        <span class="history-platform"><i class="fa-solid fa-bolt"></i> {{ item.prompt_topic }}</span>
+                        <span class="history-date">{{ item.timestamp.strftime('%Y-%m-%d %H:%M') }}</span>
+                    </div>
+                    <div class="history-content" id="content-{{ item.id }}">{{ item.generated_text }}</div>
+                    <button class="copy-history-btn" onclick="copyHistory('content-{{ item.id }}', this)">
+                        <i class="fa-regular fa-copy"></i> Copy
+                    </button>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">
+                    <i class="fa-regular fa-folder-open" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                    <h3>No history yet</h3>
+                    <p>Go generate some viral content and it will automatically be saved here!</p>
+                </div>
+            {% endif %}
+        </main>
+    </div>
+
+    <script>
+        function copyHistory(elementId, btnElement) {
+            const text = document.getElementById(elementId).textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                const originalHtml = btnElement.innerHTML;
+                btnElement.innerHTML = '<i class="fa-solid fa-check"></i> Copied!';
+                btnElement.style.background = 'var(--success-color)';
+                setTimeout(() => {
+                    btnElement.innerHTML = originalHtml;
+                    btnElement.style.background = 'rgba(255, 255, 255, 0.1)';
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>

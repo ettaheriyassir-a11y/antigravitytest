@@ -12,39 +12,64 @@
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1>Prompt <span class="highlight">Forge</span></h1>
-            <p>Craft precise instructions for Science, Math, Code & More.</p>
+        <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+            <div>
+                <h1>Trend<span class="highlight">Forge</span></h1>
+                <p>Generate Viral Marketing Hooks, Scripts, and Ad Copy instantly.</p>
+            </div>
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <div style="background: rgba(var(--accent-color-rgb), 0.1); border: 1px solid var(--accent-color); padding: 0.5rem 1rem; border-radius: 8px; color: var(--accent-color); font-weight: 600;">
+                    <i class="fa-solid fa-coins"></i> <span id="credit-count">{{ user.credits }}</span> Credits
+                </div>
+                <span style="color: var(--text-secondary); font-size: 0.9rem; margin-right: 0.5rem;">
+                    <i class="fa-solid fa-user"></i> {{ user.email }}
+                </span>
+                <a href="{{ url_for('history') }}" class="secondary-btn" style="text-decoration: none; padding: 0.5rem 1rem; font-size: 0.9rem;">
+                    <i class="fa-solid fa-clock-rotate-left"></i> History
+                </a>
+                <a href="{{ url_for('logout') }}" class="secondary-btn" style="text-decoration: none; padding: 0.5rem 1rem; font-size: 0.9rem; color: var(--danger-color);">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out
+                </a>
+            </div>
         </header>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div style="background: rgba(16, 185, 129, 0.2); color: #6ee7b7; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; border: 1px solid rgba(16, 185, 129, 0.3); text-align: center;">
+                  {{ message }}
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
 
         <main class="glass-panel">
             <div class="row">
                 <div class="form-group half-width">
-                    <label for="domain">1. Domain / Field</label>
+                    <label for="domain">1. Target Platform</label>
                     <div class="select-wrapper">
                         <select id="domain">
-                            <option value="General Expert">General Expert</option>
-                            <option value="Computer Science & Programming">Computer Science & Programming</option>
-                            <option value="Mathematics">Mathematics</option>
-                            <option value="Physics">Physics</option>
-                            <option value="Chemistry">Chemistry</option>
-                            <option value="Biology & Life Sciences">Biology & Life Sciences</option>
-                            <option value="Data Science & Statistics">Data Science & Statistics</option>
-                            <option value="Engineering">Engineering</option>
-                            <option value="Medicine & Healthcare">Medicine & Healthcare</option>
+                            <option value="TikTok">TikTok</option>
+                            <option value="Instagram Reels">Instagram Reels</option>
+                            <option value="LinkedIn Post">LinkedIn Post</option>
+                            <option value="Twitter/X Thread">Twitter/X Thread</option>
+                            <option value="Email Newsletter">Email Newsletter</option>
+                            <option value="Facebook Ad">Facebook Ad</option>
+                            <option value="YouTube Script">YouTube Script</option>
                         </select>
                         <i class="fa-solid fa-chevron-down select-icon"></i>
                     </div>
                 </div>
                 
                 <div class="form-group half-width">
-                    <label for="audience">2. Target Audience / Tone</label>
+                    <label for="audience">2. Target Audience</label>
                     <div class="select-wrapper">
                         <select id="audience">
-                            <option value="Expert / Professional">Expert / Professional</option>
-                            <option value="College / Academic">College / Academic</option>
-                            <option value="High School Student">High School Student</option>
-                            <option value="Layman / General Public">Layman / General Public</option>
+                            <option value="Gen Z (18-24)">Gen Z (18-24)</option>
+                            <option value="Millennials (25-40)">Millennials (25-40)</option>
+                            <option value="Corporate Professionals (B2B)">Corporate Professionals (B2B)</option>
+                            <option value="Busy Parents">Busy Parents</option>
+                            <option value="General Public">General Public</option>
                         </select>
                         <i class="fa-solid fa-chevron-down select-icon"></i>
                     </div>
@@ -52,37 +77,37 @@
             </div>
 
             <div class="form-group">
-                <label for="idea">3. What's your core idea or context?</label>
-                <textarea id="idea" placeholder="E.g., I am exploring the implications of quantum entanglement on information theory..." rows="3"></textarea>
+                <label for="idea">3. What is your Product or Service?</label>
+                <textarea id="idea" placeholder="E.g., I am selling a $50 blue light blocking glasses designed for gamers..." rows="2"></textarea>
             </div>
 
             <div class="form-group">
-                <label>4. What specific tasks do you need it to do?</label>
+                <label>4. Key Benefits or Hooks to include</label>
                 <div id="tasks-container">
                     <div class="task-input-wrapper">
-                        <input type="text" class="task-input" placeholder="E.g., Explain the concept of Bell's Theorem">
+                        <input type="text" class="task-input" placeholder="E.g., Mention it cures headaches within 20 minutes">
                         <button class="icon-btn remove-task" aria-label="Remove task" disabled>
                             <i class="fa-solid fa-xmark"></i>
                         </button>
                     </div>
                 </div>
                 <button id="add-task-btn" class="secondary-btn">
-                    <i class="fa-solid fa-plus"></i> Add Another Task
+                    <i class="fa-solid fa-plus"></i> Add Another Benefit
                 </button>
             </div>
 
             <div class="form-group">
-                <label for="achievement">5. What is the ultimate goal or achievement?</label>
-                <textarea id="achievement" placeholder="E.g., I want to build a foundational understanding to write a research paper on quantum cryptography." rows="2"></textarea>
+                <label for="achievement">5. Desired Action (Call to Action)</label>
+                <textarea id="achievement" placeholder="E.g., Click the link in bio to get 20% off today." rows="1"></textarea>
             </div>
 
             <div class="form-group">
-                <label for="constraints">6. Specific Constraints & Formatting</label>
-                <textarea id="constraints" placeholder="E.g., Use LaTeX for all mathematical equations. Provide citations in APA format. Do not use analogies, stick to rigorous mathematical definitions." rows="2"></textarea>
+                <label for="constraints">6. Brand Tone & Constraints</label>
+                <textarea id="constraints" placeholder="E.g., Keep it humorous and energetic. Use emojis. Do not sound too salesy." rows="2"></textarea>
             </div>
 
             <button id="generate-btn" class="primary-btn">
-                <i class="fa-solid fa-wand-magic-sparkles"></i> Generate Precision Prompt
+                <i class="fa-solid fa-rocket"></i> Generate Viral Content
             </button>
         </main>
 
@@ -99,6 +124,28 @@
             </div>
         </section>
     </div>
+
+    <!-- Stripe Checkout Modal -->
+    <div id="paywall-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 1000; align-items: center; justify-content: center;">
+        <div class="glass-panel" style="max-width: 400px; text-align: center; position: relative;">
+            <button onclick="document.getElementById('paywall-modal').style.display='none'" class="icon-btn" style="position: absolute; top: 1rem; right: 1rem;">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <i class="fa-solid fa-lock" style="font-size: 3rem; color: var(--accent-color); margin-bottom: 1rem;"></i>
+            <h2>Out of Credits</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 2rem;">You have used all your free AI generations. Purchase a credit pack to continue crafting expert prompts!</p>
+            
+            <div style="background: rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border: 1px solid rgba(255,255,255,0.1);">
+                <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem;">50 Credits</h3>
+                <p style="font-size: 2rem; font-weight: 700; color: var(--accent-color);">$5.00</p>
+            </div>
+
+            <button id="checkout-btn" class="primary-btn" style="width: 100%;">
+                <i class="fa-brands fa-stripe"></i> Pay with Stripe
+            </button>
+        </div>
+    </div>
+
     <script src="/static/script.js"></script>
 </body>
 </html>

@@ -67,20 +67,21 @@ document.addEventListener('DOMContentLoaded', () => {
             .filter(val => val !== '');
 
         if (!idea && tasks.length === 0 && !achievement) {
-            alert('Please fill in at least the core idea, a task, or a goal.');
+            alert('Please fill in at least the product description or a key benefit.');
             return;
         }
 
-        // Build the prompt using rigorous formatting
-        let promptText = `**Role**: Act as a leading expert in ${domain}.\n`;
-        promptText += `**Target Audience**: Your response should be tailored for a ${audience}.\n\n`;
+        // Build the prompt using rigorous marketing formatting
+        let promptText = `**Role**: Act as an award-winning Chief Marketing Officer and expert copywriter.\n`;
+        promptText += `**Target Platform**: Create content perfectly optimized for ${domain}.\n`;
+        promptText += `**Target Audience**: Your response should be precisely tailored to convert ${audience}.\n\n`;
 
         if (idea) {
-            promptText += `### Context / Core Idea\n${idea}\n\n`;
+            promptText += `### Product / Service Overview\n${idea}\n\n`;
         }
 
         if (tasks.length > 0) {
-            promptText += `### Required Tasks\nPlease accomplish the following specific tasks:\n`;
+            promptText += `### Key Benefits / Hooks to Include\nPlease organically weave the following into the copy:\n`;
             tasks.forEach(task => {
                 promptText += `- ${task}\n`;
             });
@@ -88,11 +89,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (achievement) {
-            promptText += `### Ultimate Goal\n${achievement}\n\n`;
+            promptText += `### Call to Action (CTA)\nEnd the content by driving the audience to do the following: ${achievement}\n\n`;
         }
 
         if (constraints) {
-            promptText += `### Constraints & Formatting Rules\nYou must strictly adhere to the following constraints:\n${constraints}\n\n`;
+            promptText += `### Brand Tone & Constraints\nYou must strictly adhere to the following guidelines:\n${constraints}\n\n`;
         }
 
         promptText += `### Additional Instructions\nProvide a comprehensive, highly accurate, and rigorous response. If you require further clarification to provide the best possible output, please state your questions before answering.`;
@@ -111,25 +112,69 @@ document.addEventListener('DOMContentLoaded', () => {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ prompt: promptText })
+            body: JSON.stringify({ prompt: promptText, topic: domain })
         })
-        .then(response => response.json())
+        .then(async response => {
+            const data = await response.json();
+            if (!response.ok) {
+                if (data.code === 'OUT_OF_CREDITS') {
+                    // Show Paywall Modal
+                    document.getElementById('paywall-modal').style.display = 'flex';
+                    throw new Error('Out of credits');
+                }
+                throw new Error(data.error || 'Server error');
+            }
+            return data;
+        })
         .then(data => {
-            if (data.error) {
-                promptOutput.textContent = "Error: " + data.error;
-            } else {
-                promptOutput.textContent = data.result;
+            promptOutput.textContent = data.result;
+            // Update credit counter visually
+            if (data.remaining_credits !== undefined) {
+                document.getElementById('credit-count').textContent = data.remaining_credits;
             }
         })
         .catch(err => {
-            promptOutput.textContent = "Error connecting to server. Is the backend running?";
-            console.error(err);
+            if (err.message !== 'Out of credits') {
+                promptOutput.textContent = "Error: " + err.message;
+                console.error(err);
+            } else {
+                promptOutput.textContent = "Generation blocked. Please purchase more credits.";
+            }
         })
         .finally(() => {
             generateBtn.disabled = false;
             generateBtn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> Generate Precision Prompt';
         });
     });
+
+    // Stripe Checkout Initiation
+    const checkoutBtn = document.getElementById('checkout-btn');
+    if (checkoutBtn) {
+        checkoutBtn.addEventListener('click', () => {
+            checkoutBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Loading...';
+            checkoutBtn.disabled = true;
+
+            fetch('/create-checkout-session', {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.url) {
+                    window.location.href = data.url; // Redirect to Stripe
+                } else {
+                    alert('Error creating checkout session.');
+                    checkoutBtn.innerHTML = '<i class="fa-brands fa-stripe"></i> Pay with Stripe';
+                    checkoutBtn.disabled = false;
+                }
+            })
+            .catch(err => {
+                console.error('Checkout error:', err);
+                alert('Error connecting to payment provider.');
+                checkoutBtn.innerHTML = '<i class="fa-brands fa-stripe"></i> Pay with Stripe';
+                checkoutBtn.disabled = false;
+            });
+        });
+    }
 
     // Copy to Clipboard
     copyBtn.addEventListener('click', () => {
